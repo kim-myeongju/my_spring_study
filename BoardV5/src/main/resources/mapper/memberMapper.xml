@@ -9,5 +9,10 @@
 		SELECT * FROM MEMBER WHERE MEMBER_ID = #{member_id}
 	</select>
 	
+	<insert id="saveMember">
+		INSERT INTO MEMBER (MEMBER_ID, PASSWORD, NAME, GENDERTYPE, BIRTH, EMAIL) 
+					VALUES (#{member_id}, #{password}, #{name}, #{gender}, #{birth}, #{email})
+	</insert>
+	
 </mapper>
   

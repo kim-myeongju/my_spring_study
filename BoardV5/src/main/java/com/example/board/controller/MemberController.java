@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.board.model.member.LoginForm;
 import com.example.board.model.member.Member;
+import com.example.board.model.member.MemberJoinForm;
 import com.example.board.repository.MemberMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -72,6 +73,41 @@ public class MemberController {
 		
 		return "redirect:/";
 		
+	}
+	
+	@GetMapping("join")
+	public String joinForm(Model model) {
+		model.addAttribute("joinForm", new MemberJoinForm());
+		return "member/joinForm";
+	}
+	
+	@PostMapping("join")
+	public String join(@Validated @ModelAttribute("joinForm") MemberJoinForm joinForm, BindingResult result) {
+		
+		log.info("joinForm: {}", joinForm);
+		
+		if(result.hasErrors()) {
+			return "member/joinForm";
+		}
+		
+		if(!joinForm.getEmail().contains("@")) {
+			result.reject("emailError", "이메일 형식이 잘못되었습니당");
+			return "member/joinForm";
+		}
+		
+		Member member = memberMapper.findMember(joinForm.getMember_id());
+		
+		if(member != null) {
+			log.info("이미 가입된 아이디");
+			
+			result.reject("duplicate ID", "이미 가입된 아이디 입니다.");
+			
+			return "member/joinForm";
+		}
+		
+		memberMapper.saveMember(MemberJoinForm.toMember(joinForm));
+		
+		return "redirect:/";
 	}
 	
 }
