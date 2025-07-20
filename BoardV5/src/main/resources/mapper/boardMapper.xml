@@ -23,5 +23,20 @@
 		</where>
 		ORDER BY CREATED_TIME DESC
 	</select>
+	
+	<insert id="saveBoard">
+		<selectKey keyProperty="board_id" resultType="long" order="BEFORE">
+			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BOARD (BOARD_ID, TITLE, CONTENTS, MEMBER_ID) VALUES (#{board_id}, #{title}, #{contents}, #{member_id})
+	</insert>
+	
+	<insert id="saveFile">
+		<selectKey keyProperty="attachedFile_id" resultType="long" order="BEFORE">
+			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO ATTACHED_FILE (ATTACHEDFILE_ID, BOARD_ID, ORIGINAL_FILENAME, SAVED_FILENAME, FILE_SIZE) 
+		VALUES (#{attachedFile_id}, #{board_id}, #{original_filename}, #{saved_filename}, #{file_size})
+	</insert>
 
 </mapper>

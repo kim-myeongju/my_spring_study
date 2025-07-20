@@ -57,6 +57,7 @@ mvnw
 *.cmd
 /Servers
 .metadata
+*.properties
 
 # --- React ---
 frontend/node_modules/
