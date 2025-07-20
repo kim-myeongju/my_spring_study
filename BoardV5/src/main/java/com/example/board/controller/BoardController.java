@@ -37,7 +37,7 @@ public class BoardController {
 		int total = boardService.getTotal(searchText);
 		PageNavigator navi = new PageNavigator(countPerPage, pagePerGroup, page, total);
 		
-		List<Board> boards = boardService.findBoards(searchText, navi.getStartRecord(), navi.getCurrentPage());
+		List<Board> boards = boardService.findBoards(searchText, navi.getStartRecord(), navi.getCountPerPage());
 		
 		model.addAttribute("boards", boards);
 		model.addAttribute("navi", navi);

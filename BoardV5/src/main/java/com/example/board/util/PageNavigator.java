@@ -35,6 +35,16 @@ public class PageNavigator {
         endPageGroup = startPageGroup + pagePerGroup - 1;
         endPageGroup = endPageGroup < totalPageCount ? endPageGroup : totalPageCount;
         startRecord = (currentPage - 1) * countPerPage;
+        
+        System.out.println("countPerPage 페이지당 글목록 수 : " + countPerPage);
+        System.out.println("pagePerGroup 그룹당 페이지 수 : " + pagePerGroup);
+        System.out.println("currentPage 현재 페이지 (최근 글이 1부터 시작) : " + currentPage);
+        System.out.println("totalRecordsCount 전체 글 수 : " + totalRecordsCount);
+        System.out.println("totalPageCount 전체 페이지 수 : " + totalPageCount);
+        System.out.println("currentGroup 현재 그룹 (최근 그룹이 0부터 시작) : " + currentGroup);
+        System.out.println("startPageGroup 현재 그룹의 첫 페이지 : " + startPageGroup);
+        System.out.println("endPageGroup 현재 그룹의 마지막 페이지 : " + endPageGroup);
+        System.out.println("startRecord 전체 레코드 중 현재 페이지 첫 글의 위치 (0부터 시작) : " + startRecord);
 		
     }
 
