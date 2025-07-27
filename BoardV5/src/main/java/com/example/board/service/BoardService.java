@@ -41,5 +41,51 @@ public class BoardService {
 			boardMapper.saveFile(attachedFile);
 		}
 	}
+	
+	public Board findBoard(Long board_id) {
+		return boardMapper.findBoard(board_id);
+	}
+	
+	public Board readBoard(Long board_id) {
+		
+		Board board = findBoard(board_id);
+		board.addHit();
+		updateBoard(board, false, null);
+		
+		return board;
+	}
+	
+	public void updateBoard(Board updateBoard, boolean isFileRemoved, MultipartFile file) {
+		Board board = findBoard(updateBoard.getBoard_id());
+		
+		if(board != null) {
+			boardMapper.updateBoard(board);
+			
+			AttachedFile attachedFile = boardMapper.findFileByBoardId(updateBoard.getBoard_id());
+			
+			if(attachedFile != null && (isFileRemoved || (file != null && file.getSize() > 0))) {
+				// 파일 삭제를 요청했거나 새로운 파일이 업로드 되면 기존 파일을 삭제한다.
+				removeAttachedFile(attachedFile.getAttachedFile_id());
+			}
+			
+			// 새로 저장할 파일이 있으면 저장한다.
+			if(file != null && file.getSize() > 0) {
+				
+			}
+			
+		}
+	}
+	
+	public void removeAttachedFile(Long attachedFile_id) {
+		
+	}
+	
+	public AttachedFile findFileByBoardId(Long board_id) {
+		return boardMapper.findFileByBoardId(board_id);
+	}
+	
+	public AttachedFile findFileByAttachedFileId(Long attachedFile_id) {
+		return boardMapper.fineFileByAttachedFileId(attachedFile_id);
+	}
 
 }

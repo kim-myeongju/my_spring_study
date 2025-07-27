@@ -17,4 +17,15 @@ public class Reply {
 	private String content;
 	private LocalDateTime created_time;
 	
+	public static ReplyDto toDto(Reply reply) {
+		ReplyDto dto = new ReplyDto();
+		dto.setReply_id(reply.getReply_id());
+		dto.setBoard_id(reply.getBoard_id());
+		dto.setMember_id(reply.getMember_id());
+		dto.setContent(reply.getContent());
+		dto.setCreated_time(reply.getCreated_time());
+		
+		return dto;
+	}
+	
 }

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/css/default.css">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" th:inline="javascript">
+	function writeReply() {
+		let board_id = [[${board.board_id}]];
+		let content = $("#reply").val();
+		
+		if(content === "") {
+			alert("리플 내용을 입력해주세요.");
+			$("#reply").focus();
+			return;
+		}
+		
+		$.ajax({
+			url: "/reply/" + board_id,
+			type: "post",
+			data: {
+				"content": content,
+			},
+			success: function(data, success, xhr) {
+				console.log(data);
+				getReplies();
+			},
+			error: function(xhr, status, error) {
+				console.log(status);
+			}
+		});
+	}
+	
+	function getReplies() {
+		let board_id = [[${board.board_id}]];
+		$.ajax({
+			url: "/reply/" + board_id,
+			success: function(data, success, xhr) {
+				console.log(data);
+				showReplies(data);
+			},
+			error: function(xhr, status, error) {
+				console.log(status);
+			}
+		});
+	}
+	
+	function showReplies(data) {
+		$("#replies").html("");
+		let str = "";
+		str += "<table>";
+		str += "  <tr>";
+        str += "      <th>No.</th>";
+        str += "      <th>내용.</th>";
+        str += "      <th>작성자.</th>";
+        str += "      <th>작성일</th>";
+        str += "  </tr>";
+        if(data.length > 0) {
+        	$(data).each(function(idx, obj) {
+        		let created_time = new Date(obj.created_time);
+        		let time = created_time.getFullYear() + "."
+		                + (created_time.getMonth() + 1) + "."
+		                + created_time.getDate() + ". "
+		                + created_time.getHours() + ":"
+		                + created_time.getMinutes();
+        		str += "<tr>";
+        		str += "  <td class='center'>" + (idx + 1) + "</td>";
+        		
+        		if(obj.writer == true) {
+        			str += "  <td><input type='text' id='reply_" + obj.reply_id + "' value='" + obj.content + "'>";
+                    str += "<input type='button' value='수정' onclick='updateReply(" + obj.reply_id + ")'>";
+                    str += "<input type='button' value='삭제' onclick='removeReply(" + obj.reply_id + ")'>";
+                } else {
+                	str += "  <td>" + obj.content;
+                }
+        		str += "  </td>";
+                str += "  <td class='center'>" + obj.member_id + "</td>";
+                str += "  <td class='center'>" + time + "</td>";
+                str += "</tr>";
+        	});
+        } else {
+        	str += "<tr>"
+            str += "<td class='center' colspan='4'>등록된 리플이 없습니다.</td>"
+            str += "<tr>"
+        }
+        str += "</table>";
+        $("#replies").append(str);
+	}
+	
+	
+	$(function() {
+		getReplies();
+		$("#reply").keydown(function(event) {
+			if(event.originalEvent.code === "Enter") {
+				writeReply();
+			}
+		});
+	});
+	
+</script>
+</head>
+<body>
+<div id="container">
+	<h1>[ 게시판 - 글읽기 ]</h1>
+	<table th:object="${board}">
+		<tr>
+			<th>제목</th>
+			<td th:text="*{title}"></td>
+		</tr>
+		<tr>
+			<th>내용</th>
+			<td th:text="*{contents}"></td>
+		</tr>
+		<tr>
+			<th>조회수</th>
+			<td th:text="*{hit}"></td>
+		</tr>
+		<tr>
+			<th>작성일</th>
+			<td th:text="${#temporals.format(board.created_time, 'yyyy-MM-dd HH:mm')}"></td>
+		</tr>
+		<tr>
+			<th>작성자</th>
+			<td th:text="*{member_id}"></td>
+		</tr>
+		<tr>
+			<th>첨부파일</th>
+			<td>
+				<a th:if="${file}" th:href="@{/board/download/{id}(id=${file.attachedFile_id})}" th:text="${file.original_filename}"></a>
+			</td>
+		</tr>
+	</table>
+	<p>
+	<div class="center">
+		<input type="button" onclick="location.href='/board/list'" value="목록으로">
+		<th:block th:if="${session.loginMember.member_id == board.member_id}">
+			<input type="button" th:onclick="|location.href='/board/update?board_id=${board.board_id}'|" value="수정하기">
+			<input type="button" th:onclick="|location.href='/board/delete?board_id=${board.board_id}'|" value="삭제하기">
+		</th:block>
+	</div>
+	<P>
+	<div>
+		<label for="reply">리플쓰기 : </label>
+		<input type="text" id="reply" name="reply">
+		<input type="button" value="등록" onclick="writeReply()">
+	</div>
+	<p>
+	<div id="replies"></div>
+</div>
+</body>
+</html>

@@ -24,11 +24,15 @@
 		ORDER BY CREATED_TIME DESC
 	</select>
 	
+	<select id="findBoard" resultType="board">
+		SELECT * FROM BOARD WHERE BOARD_ID = #{board_id}
+	</select>
+	
 	<insert id="saveBoard">
 		<selectKey keyProperty="board_id" resultType="long" order="BEFORE">
 			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
 		</selectKey>
-		INSERT INTO BOARD (BOARD_ID, TITLE, CONTENTS, MEMBER_ID) VALUES (#{board_id}, #{title}, #{contents}, #{member_id})
+		INSERT INTO BOARD (BOARD_ID, TITLE, CONTENTS, MEMBER_ID, HIT, CREATED_TIME) VALUES (#{board_id}, #{title}, #{contents}, #{member_id}, 0, SYSDATE)
 	</insert>
 	
 	<insert id="saveFile">
@@ -38,5 +42,23 @@
 		INSERT INTO ATTACHED_FILE (ATTACHEDFILE_ID, BOARD_ID, ORIGINAL_FILENAME, SAVED_FILENAME, FILE_SIZE) 
 		VALUES (#{attachedFile_id}, #{board_id}, #{original_filename}, #{saved_filename}, #{file_size})
 	</insert>
+	
+	<update id="updateBoard">
+		UPDATE BOARD
+		<set>
+			<if test="title != null">TITLE = #{title},</if>
+			<if test="contents != null">CONTENTS = #{contents},</if>
+			<if test="hit != null">HIT = #{hit},</if>
+		</set>
+		WHERE BOARD_ID = #{board_id}
+	</update>
+	
+	<select id="findFileByBoardId" resultType="file">
+		SELECT * FROM ATTACHED_FILE WHERE BOARD_ID = #{board_id}
+	</select>
+	
+	<select id="fineFileByAttachedFileId" resultType="file">
+		SELECT * FROM ATTACHED_FILE WHERE ATTACHEDFILE_ID = #{attachedFile_id}
+	</select>
 
 </mapper>
